@@ -102,22 +102,23 @@ Players are classes that must implement methods:
     def __init__(self, player1, player2):
         """Set everything up"""
         print("Init game")
-        self.board = TicTacToeBoard()
+        self.board = TicTacToeBoard() # Unnecessary
         self.player1 = player1
         self.player2 = player2
 
-    def play(self):
+    def play(self, quiet=False):
         """Play tic-tac-toe to completion"""
+
+        self.player1.reset()
+        self.player2.reset()
+        self.board = TicTacToeBoard()
         
         turn = 1
         while True:
             playerNumber = (turn+1)%2 + 1
-            if playerNumber==1:
-                player = self.player1
-                otherPlayer = self.player2
-            else:
-                player = self.player2
-                otherPlayer = self.player1
+
+            player = self.__currentPlayer(turn)
+            otherPlayer = self.__waitingPlayer(turn)
 
             matrixBoard = self.board.boardAsMatrix()
             move = player.proposeMove(playerNumber, matrixBoard)
@@ -127,17 +128,19 @@ Players are classes that must implement methods:
                 self.board.placeToken(x, y, playerNumber)
             except IllegalMoveException:
                 player.receiveReward(-2) # Bad move, penalized more than losing honestly
-                print("Illegal move by player {} (proposed ({},{})".format(playerNumber, x, y))
-                print("Player {} wins!".format(playerNumber%2 + 1))
-                self.board.print()
+                if not quiet:
+                    print("Illegal move by player {} (proposed ({},{})".format(playerNumber, x, y))
+                    print("Player {} wins!".format(playerNumber%2 + 1))
+                    self.board.print()
                 break
 
             winner = self.board.checkWinner()
             if winner != 0:
                 player.receiveReward(1) # You won, have a cookie!
-                otherPlayer.receiveReward(-1) # You lose the game and a cookie 
-                print("Player {} wins!".format(playerNumber))
-                self.board.print()
+                otherPlayer.receiveReward(-1) # You lose the game and a cookie
+                if not quiet:
+                    print("Player {} wins!".format(playerNumber))
+                    self.board.print()
                 break
 
             if turn > 1:
@@ -146,9 +149,22 @@ Players are classes that must implement methods:
             turn += 1
             if turn == 10:
                 player.receiveReward(0)
-                print("Draw!")
-                self.board.print()
+                if not quiet:
+                    print("Draw!")
+                    self.board.print()
                 break
+
+    def __currentPlayer(self, turn):
+        if turn % 2 == 0:
+            return self.player2
+        else:
+            return self.player1
+
+    def __waitingPlayer(self, turn):
+        if turn % 2 == 0:
+            return self.player1
+        else:
+            return self.player2
                       
 
 class randomPlayer():
@@ -158,6 +174,9 @@ class randomPlayer():
         return (x,y)
 
     def receiveReward(self, reward):
+        pass
+
+    def reset(self):
         pass
 
 class humanPlayer():
@@ -188,6 +207,9 @@ class humanPlayer():
 
     def receiveReward(self, reward):
         pass
+
+    def reset(self):
+        print('Game ended')
         
 class LearningPlayer1():
     def __init__(self):
@@ -204,19 +226,20 @@ class LearningPlayer1():
         self.__lastState = None
         
     def proposeMove(self, playerNumber, currentBoard):
+
         # First identify the next move
+        bestActionVal = -10
+        bestAction = None
+        for a in self.__actionList:
+            qKey = (currentBoard, a)
+            if self.__valueMap[qKey] > bestActionVal:
+                bestActionVal = self.__valueMap[qKey]
+                bestAction = a
+
         if random.random() < self.__epsilon:
             move = random.choice(self.__actionList)
         else:
-            bestActionVal = -10
-            bestAction = None
-            for a in self.__actionList:
-                qKey = (currentBoard, a)
-                if self.__valueMap[qKey] > bestActionVal:
-                    bestActionVal = self.__valueMap[qKey]
-                    bestAction = a
-
-            move = a
+            move = bestAction
 
         # Update value of previous state if any
         if self.__lastState is not None:
@@ -224,7 +247,7 @@ class LearningPlayer1():
             self.__valueMap[lastQKey] += self.__alpha * (bestActionVal - self.__valueMap[lastQKey])
 
         # Remember this state and action
-        self.__lastAction = a
+        self.__lastAction = move
         self.__lastState = currentBoard
 
         # Finally unveil the chosen move to the waiting world
@@ -253,6 +276,22 @@ def testGame():
     p2 = humanPlayer()
     game = TicTacToeGame(p1, p2)
     game.play()
-    
+
+def testAI():
+    ai1 = LearningPlayer1()
+    ai2 = LearningPlayer1()
+    game = TicTacToeGame(ai1, ai2)
+    for n in range(100000):
+        game.play(quiet=True)
+
+    print('Done training')
+    human = humanPlayer()
+
+    game1 = TicTacToeGame(human, ai2)
+    game2 = TicTacToeGame(ai1, human)
+
+    while True:
+        game1.play()
+        game2.play()
 
         
