@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import collections
 
 playerSymbols ={1:'X', 2:'O'}
 
@@ -53,7 +54,7 @@ class TicTacToeBoard():
 
     def boardAsMatrix(self):
         """Returns board represented as 3x3 matrix with entries 0 (empty cell), 1 (X) and 2 (O)."""
-        return self.__board
+        return tuple([tuple(row) for row in self.__board])
 
     def checkWinner(self):
         """Returns 0 for no winner. Otherwise 1 or 2 indicating the winning player"""
@@ -88,7 +89,7 @@ class TicTacToeBoard():
             return list(winners.keys())[0]
         else:
             raise IllegalPositionException
-        
+
 
 
 class TicTacToeGame():
@@ -190,36 +191,54 @@ class humanPlayer():
         
 class LearningPlayer1():
     def __init__(self):
-        self.__valueMap = dict()
+        self.__valueMap = collections.defaultdict(lambda:0) # (state,action) -> value
         self.__board = np.zeros((3,3), dtype='int')
         self.__epsilon = 0.05 # Chance of doing random move
+        self.__alpha = 0.1 # Learning speed
+        self.__actionList = [(x,y) for x in range(1,4) for y in range(1,4)]
+        self.__lastAction = None
+        self.__lastState = None
 
-    def proposeMove(playerNumber, currentBoard):
-        for x in np.nditer(currentBoard, op_flags=['readwrite']):
-            if x == 0:
-                continue
-            elif x == playerNumber:
-                x = 1
-            else:
-                x = -1
-
-        bestValue = -10
-        bestMoves = []
-
-        for x in range(1,4):
-            for y in range(1,4):
-                newBoard
-                
-                val = self.__valueMap.get(
+    def reset(self):
+        self.__lastAction = None
+        self.__lastState = None
         
-
+    def proposeMove(self, playerNumber, currentBoard):
+        # First identify the next move
         if random.random() < self.__epsilon:
-                        
-        
-        
-        
+            move = random.choice(self.__actionList)
+        else:
+            bestActionVal = -10
+            bestAction = None
+            for a in self.__actionList:
+                qKey = (currentBoard, a)
+                if self.__valueMap[qKey] > bestActionVal:
+                    bestActionVal = self.__valueMap[qKey]
+                    bestAction = a
 
-    
+            move = a
+
+        # Update value of previous state if any
+        if self.__lastState is not None:
+            lastQKey = (self.__lastState, self.__lastAction)
+            self.__valueMap[lastQKey] += self.__alpha * (bestActionVal - self.__valueMap[lastQKey])
+
+        # Remember this state and action
+        self.__lastAction = a
+        self.__lastState = currentBoard
+
+        # Finally unveil the chosen move to the waiting world
+        return move
+
+    def receiveReward(self, reward):
+        lastQKey = (self.__lastState, self.__lastAction)
+        self.__valueMap[lastQKey] += self.__alpha * reward
+
+        
+            
+            
+                    
+                        
 def testBoard():
     b = TicTacToeBoard()
     b.placeToken(2,2,1)
@@ -230,6 +249,7 @@ def testBoard():
 
 def testGame():
     p1 = randomPlayer()
+    p1 = LearningPlayer1()
     p2 = humanPlayer()
     game = TicTacToeGame(p1, p2)
     game.play()
