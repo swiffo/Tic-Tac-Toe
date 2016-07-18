@@ -35,8 +35,7 @@ class TicTacToeGame():
         self.player2.reset()
         self.board = board.TicTacToeBoard()
         
-        turn = 1 
-        while True:
+        for turn in range(1,10):
             playerNumber = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
 
             player      = self.__currentPlayer(turn)
@@ -67,16 +66,14 @@ class TicTacToeGame():
             if turn > 1:
                 otherPlayer.receiveReward(0) # Note that we wait for the player A to make his move before deciding on player B's reward
 
-            turn += 1
 
-            # If 9 thingies have been placed without error and no winner has been found, the board is full, and it's a draw
-            if turn == 10:
-                player.receiveReward(0)
-                otherPlayer.receiveReward(0)
-                if not quiet:
-                    print("Draw!")
-                    self.board.printBoard()
-                break
+        # Having made it to here means 9 tokens have been placed legally on the board with no winner being found. Hence, it's a draw.
+        player.receiveReward(0)
+        otherPlayer.receiveReward(0)
+        if not quiet:
+            print("Draw!")
+            self.board.printBoard()
+
 
     def __currentPlayer(self, turn):
         if turn % 2 == 0:
