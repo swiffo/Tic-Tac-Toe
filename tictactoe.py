@@ -44,6 +44,7 @@ class TicTacToeGame():
             matrixBoard = self.board.boardAsMatrix()
             move = player.proposeMove(playerNumber, matrixBoard)
             
+            # Enact the move
             try:
                 self.board.placeToken(move, playerNumber)
             except board.IllegalMoveException:
@@ -54,6 +55,7 @@ class TicTacToeGame():
                     self.board.printBoard()
                 break
 
+            # Check for winner
             if turn >= 5:  # No need to check for a winner till turn 5
                 winner = self.board.checkWinner()
                 if winner != 0:
