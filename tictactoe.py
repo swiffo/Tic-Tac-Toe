@@ -18,13 +18,13 @@ from players import *
 #     [receiveReward] will be called with the reward for the last action
 # [reset] will be called, signalling that the player should be ready for a new episode.
 
+# Points are: 1 point for winning the game, -1 point for losing and -2 points for making an illegal move (winner gets nothing in that case)
 
 class TicTacToeGame():
     """Class for controlling a game between two specified players."""
+
     def __init__(self, player1, player2):
-        """Set everything up"""
-        print("Init game")
-        self.board = board.TicTacToeBoard() # Unnecessary
+        """Register the competing players"""
         self.player1 = player1
         self.player2 = player2
 
@@ -35,24 +35,23 @@ class TicTacToeGame():
         self.player2.reset()
         self.board = board.TicTacToeBoard()
         
-        turn = 1
+        turn = 1 
         while True:
-            playerNumber = (turn+1)%2 + 1
+            playerNumber = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
 
-            player = self.__currentPlayer(turn)
+            player      = self.__currentPlayer(turn)
             otherPlayer = self.__waitingPlayer(turn)
 
             matrixBoard = self.board.boardAsMatrix()
             move = player.proposeMove(playerNumber, matrixBoard)
-            x,y = move
             
             try:
-                self.board.placeToken(x, y, playerNumber)
+                self.board.placeToken(move, playerNumber)
             except board.IllegalMoveException:
                 player.receiveReward(-2) # Bad move, penalized more than losing honestly
                 if not quiet:
-                    print("Illegal move by player {} (proposed ({},{})".format(playerNumber, x, y))
-                    print("Player {} wins!".format(playerNumber%2 + 1))
+                    print("Illegal move by player {} (proposed {})".format(playerNumber, str(move)))
+                    print("Player {} wins!".format(playerNumber%2 + 1)) # The other guy wins
                     self.board.printBoard()
                 break
 
@@ -69,6 +68,8 @@ class TicTacToeGame():
                 otherPlayer.receiveReward(0) # Note that we wait for the player A to make his move before deciding on player B's reward
 
             turn += 1
+
+            # If 9 thingies have been placed without error and no winner has been found, the board is full, and it's a draw
             if turn == 10:
                 player.receiveReward(0)
                 otherPlayer.receiveReward(0)
@@ -92,9 +93,12 @@ class TicTacToeGame():
 
 def testGame():
     p1 = randomPlayer()
-    p1 = LearningPlayer1()
-    p2 = humanPlayer()
+    p2 = LearningPlayer1()
     game = TicTacToeGame(p1, p2)
-    game.play()
+    for n in range(100):
+        game.play(True) # play quietly
+
+if __name__ == "__main__":
+    testGame()
 
 

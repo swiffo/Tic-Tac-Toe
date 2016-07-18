@@ -21,9 +21,10 @@ class TicTacToeBoard():
         """Set up the initial state (3x3 board)"""
         self.__board = np.zeros((3,3), dtype='int')
         
-    def placeToken(self, x, y, player):
+    def placeToken(self, placing, player):
         """x and y between 1 and 3, player either 1 or 2"""
 
+        x,y = placing
         try:
             currentOccupant = self.__board[x-1, y-1]
         except:
