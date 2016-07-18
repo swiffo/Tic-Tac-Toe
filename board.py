@@ -2,6 +2,14 @@ import numpy as np
 
 playerSymbols = {1:'X', 2:'O'}
 
+def playerNumberToSymbol(playerNumber):
+    if playerNumber==1:
+        return 'X'
+    elif playerNumber==2:
+        return 'O'
+    else:
+        raise IllegalPlayerNumber
+
 class IllegalMoveException(BaseException):
     """Indicates an illegal move. E.g., putting a token in an occupied cell"""
     pass
@@ -26,11 +34,11 @@ class TicTacToeBoard():
 
         x,y = placing
         try:
-            currentOccupant = self.__board[x-1, y-1]
+            currentOccupant = self.__board[x-1, y-1] # Legal position?
         except:
             raise IllegalMoveException
 
-        if currentOccupant != 0:
+        if currentOccupant != 0: # Already occupied?
             raise IllegalMoveException
 
         self.__board[x-1, y-1] = player
@@ -92,11 +100,15 @@ class TicTacToeBoard():
 
 if __name__ == '__main__':
     board = TicTacToeBoard()
-    board.placeToken(2,2,1)
-    board.placeToken(1,1,1)
-    board.placeToken(1,2,1)
-    board.placeToken(3,2,2)
-    board.placeToken(3,3,1)
+    board.placeToken((2,2), 1)
+    board.placeToken((1,1),1)
+    board.placeToken((1,2),1)
+    board.placeToken((3,2),2)
+    board.placeToken((3,3),1)
+    try:
+        board.placeToken((4,2),2)
+    except IllegalMoveException:
+        pass
     board.printBoard()
     print(board.boardAsMatrix())
     
