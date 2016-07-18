@@ -1,15 +1,17 @@
 from tictactoe import *
+import timeit
 
 def testAI(numEpisodes):
     ai1 = LearningPlayer1()
     ai2 = LearningPlayer1()
     game = TicTacToeGame(ai1, ai2)
+    t_start = timeit.default_timer()
     for n in range(numEpisodes):
         if n%10000 == 0:
             print('Have trained {} times ...'.format(n))
         game.play(quiet=True)
-
-    print('Done training')
+    t_end = timeit.default_timer()
+    print('Done training in {:.0f}s'.format(t_end-t_start))
     ai1.setLearningState(False) # Stop exploratory actions
     ai2.setLearningState(False)
     human = humanPlayer()

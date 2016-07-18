@@ -54,14 +54,15 @@ class TicTacToeGame():
                     self.board.printBoard()
                 break
 
-            winner = self.board.checkWinner()
-            if winner != 0:
-                player.receiveReward(1) # You won, have a cookie!
-                otherPlayer.receiveReward(-1) # You lose the game and a cookie
-                if not quiet:
-                    print("Player {} wins!".format(playerNumber))
-                    self.board.printBoard()
-                break
+            if turn >= 5:  # No need to check for a winner till turn 5
+                winner = self.board.checkWinner()
+                if winner != 0:
+                    player.receiveReward(1) # You won, have a cookie!
+                    otherPlayer.receiveReward(-1) # You lose the game and a cookie
+                    if not quiet:
+                        print("Player {} wins!".format(playerNumber))
+                        self.board.printBoard()
+                    break
 
             if turn > 1:
                 otherPlayer.receiveReward(0) # Note that we wait for the player A to make his move before deciding on player B's reward
