@@ -10,7 +10,7 @@ def testAI(numEpisodes):
         game.play(quiet=True)
 
     print('Done training')
-    ai1.setLearningState(False)
+    ai1.setLearningState(False) # Stop exploratory actions
     ai2.setLearningState(False)
     human = humanPlayer()
     game1 = TicTacToeGame(human, ai2)
@@ -26,6 +26,7 @@ def testAI(numEpisodes):
         if answer == 'N':
             break
 
-
-
+if __name__ == "__main__":
+    numEpisodes = int(input('How many training episodes? '))
+    testAI(numEpisodes)
         
