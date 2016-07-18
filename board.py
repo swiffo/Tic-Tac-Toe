@@ -1,59 +1,101 @@
-class TicTacToeBoard:
-    """Representation of 3x3 tic-tac-toe board"""
-    borderChar = '~'
+import numpy as np
+
+playerSymbols = {1:'X', 2:'O'}
+
+class IllegalMoveException(BaseException):
+    """Indicates an illegal move. E.g., putting a token in an occupied cell"""
+    pass
+
+class IllegalPlayerNumber(BaseException):
+    """Indicates a non-valid player number"""
+    pass
+
+class IllegalPositionException(BaseException):
+    """Indicates an impossible state of the game. E.g., two winners or 5 X's and only 2 O's"""
+    pass
+
+class TicTacToeBoard():
+    """Represents a standard 3x3 tic-tac-toe board and its state"""
     
     def __init__(self):
-        self._board = [[None for j in range(3)] for i in range(3)]
+        """Set up the initial state (3x3 board)"""
+        self.__board = np.zeros((3,3), dtype='int')
+        
+    def placeToken(self, x, y, player):
+        """x and y between 1 and 3, player either 1 or 2"""
 
-    def addPiece(self, row, col, player):
-        """Add player's piece to board (row,col=0/1/2, player=0/1)"""
-        if self._board[row][col] != None:
-            raise OccupiedCellException()
+        try:
+            currentOccupant = self.__board[x-1, y-1]
+        except:
+            raise IllegalMoveException
 
-        self._board[row][col] = player
+        if currentOccupant != 0:
+            raise IllegalMoveException
+
+        self.__board[x-1, y-1] = player
 
     def printBoard(self):
-        """Ascii representation of board"""
-        rows = []
+        """Print ascii representation of the board"""
         
-        for row in range(5):
-            if row == 0 or row == 4:
-                rows.append(self.borderChar*5)
+        def repr(occ):
+            if occ == 0:
+                return "."
+            elif occ==1 or occ==2:
+                return playerSymbols[occ]
             else:
-                boardCells = [self._playerToSymbol(c) for c in self._board[row-1]]
-                rows.append( '{0}{1}{2}'.format(self.borderChar, ''.join(boardCells), self.borderChar))
+                raise IllegalPlayerNumber
+                
+        lines = ["".join([repr(occ) for occ in row]) for row in self.__board]
+        output = "\n".join(lines)
 
-        print( '\n'.join(rows))
+        print("\n"+output+"\n")
 
-    def getState(self):
-        """Returns list of lists (matrix) of board"""
-        return self._board.copy()
-        
-    def _playerToSymbol(self, player):
-        """Characters for representing player 1/2 and unoccupied cells"""
-        if player==0:
-            return 'O'
-        elif player==1:
-            return 'X'
-        elif player==None:
-            return ' '
+    def boardAsMatrix(self):
+        """Returns board represented as 3x3 matrix with entries 0 (empty cell), 1 (X) and 2 (O)."""
+        return tuple([tuple(row) for row in self.__board])
+
+    def checkWinner(self):
+        """Returns 0 for no winner. Otherwise 1 or 2 indicating the winning player"""
+
+        winners = dict()
+        # Check rows
+        for row in self.__board:
+            mx=max(row)
+            mn=min(row)
+            if mx==mn and mx!=0:
+                winners[mx] = 1
+
+        # Check columns
+        b = self.__board.transpose()
+        for row in b:
+            mx=max(row)
+            mn=min(row)
+            if mx==mn and mx!=0:
+                winners[mx] = 1
+
+        # Check diagonals
+        b = self.__board
+        if b[0,0] == b[1,1] and b[1,1] == b[2,2]:
+            winners[b[1,1]] = 1
+        elif b[2,0] == b[1,1] and b[1,1] == b[0,2]:
+            winners[b[1,1]] = 1
+
+        winnerCount = len(winners)
+        if winnerCount==0:
+            return 0
+        elif winnerCount==1:
+            return list(winners.keys())[0]
         else:
-            raise PlayerNumberException()
+            raise IllegalPositionException
 
-class OccupiedCellException(BaseException):
-    """Signifies that a cell on the board is already taken by a player"""
-    pass
-
-class PlayerNumberException(BaseException):
-    """Signifies invalid player number"""
-    pass
 
 if __name__ == '__main__':
     board = TicTacToeBoard()
-    board.addPiece(1,1,0)
-    board.addPiece(0,0,1)
-    board.addPiece(0,1,0)
-    board.addPiece(2,1,1)
-    board.addPiece(2,2,0)
+    board.placeToken(2,2,1)
+    board.placeToken(1,1,1)
+    board.placeToken(1,2,1)
+    board.placeToken(3,2,2)
+    board.placeToken(3,3,1)
     board.printBoard()
+    print(board.boardAsMatrix())
     
