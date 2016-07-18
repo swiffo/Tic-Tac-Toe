@@ -65,14 +65,13 @@ class TicTacToeGame():
 
             if turn > 1:
                 otherPlayer.receiveReward(0) # Note that we wait for the player A to make his move before deciding on player B's reward
-
-
-        # Having made it to here means 9 tokens have been placed legally on the board with no winner being found. Hence, it's a draw.
-        player.receiveReward(0)
-        otherPlayer.receiveReward(0)
-        if not quiet:
-            print("Draw!")
-            self.board.printBoard()
+        else:
+            # Having made it to here means 9 tokens have been placed legally on the board with no winner being found. Hence, it's a draw.
+            player.receiveReward(0)
+            otherPlayer.receiveReward(0)
+            if not quiet:
+                print("Draw!")
+                self.board.printBoard()
 
 
     def __currentPlayer(self, turn):

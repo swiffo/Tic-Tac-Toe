@@ -16,7 +16,7 @@ class randomPlayer():
         return (random.randrange(1,4), random.randrange(1,4))
 
     def receiveReward(self, reward):
-        pass
+        pass 
 
     def reset(self):
         pass
@@ -27,8 +27,7 @@ class humanPlayer():
     def proposeMove(self, number, matrixBoard):
         """Prints relevant information and prompts user for input"""
 
-        print("Make a move, player {}".format(number))
-        print("Your symbol is {}".format(board.playerSymbols[number]))
+        print("Make a move, player {} (symbol={})".format(number, board.playerNumberToSymbol(number)))
 
         boardString = self.__boardRepresentation(matrixBoard)
 
@@ -49,15 +48,7 @@ class humanPlayer():
         print('Game ended')
 
     def __boardRepresentation(self, matrixBoard):
-        def repr(occ):
-            if occ == 0:
-                return "."
-            elif occ==1 or occ==2:
-                return board.playerSymbols[occ]
-            else:
-                raise IllegalPlayerNumber
-                
-        lines = [ "".join([repr(occ) for occ in row]) for row in matrixBoard]
+        lines = [ "".join([board.occupancyNumberToSymbol(occ) for occ in row]) for row in matrixBoard]
         boardString = "\n".join(lines)
 
         return boardString

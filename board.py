@@ -1,7 +1,5 @@
 import numpy as np
 
-playerSymbols = {1:'X', 2:'O'}
-
 def playerNumberToSymbol(playerNumber):
     if playerNumber==1:
         return 'X'
@@ -9,6 +7,12 @@ def playerNumberToSymbol(playerNumber):
         return 'O'
     else:
         raise IllegalPlayerNumber
+
+def occupancyNumberToSymbol(number):
+    if number == 0:
+        return '.'
+    else:
+        return playerNumberToSymbol(number)
 
 class IllegalMoveException(BaseException):
     """Indicates an illegal move. E.g., putting a token in an occupied cell"""
@@ -46,15 +50,7 @@ class TicTacToeBoard():
     def printBoard(self):
         """Print ascii representation of the board"""
         
-        def repr(occ):
-            if occ == 0:
-                return "."
-            elif occ==1 or occ==2:
-                return playerSymbols[occ]
-            else:
-                raise IllegalPlayerNumber
-                
-        lines = ["".join([repr(occ) for occ in row]) for row in self.__board]
+        lines  = ["".join([occupancyNumberToSymbol(occupant) for occupant in row]) for row in self.__board]
         output = "\n".join(lines)
 
         print("\n"+output+"\n")
