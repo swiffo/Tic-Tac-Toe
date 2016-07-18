@@ -86,20 +86,8 @@ class LearningPlayer1():
 
         # First identify the best move. We need this even if we do an exploratory action
         # to update the action-value function.
-        bestActionVal = float('-inf')
-        bestAction = None
-        for action in self.__actionList:
-            qKey = (currentBoard, action)
-            actionVal = self.__valueMap[qKey]
-            if actionVal > bestActionVal:
-                bestActionVal = actionVal
-                bestAction    = action
-
-        if random.random() < self.__epsilon:
-            move = random.choice(self.__actionList)
-        else:
-            move = bestAction
-
+        bestActionVal, bestAction = max([(self.__valueMap[(currentBoard, action)], action) for action in self.__actionList])
+    
         # Update value of previous state unless it is the first move
         if self.__lastState is not None:
             # Note that we do Q(s_t, a_t) += \alpha * max_a' Q(s_{t+1}, a') here.
@@ -107,6 +95,12 @@ class LearningPlayer1():
             # (see explanation there)
             lastQKey = (self.__lastState, self.__lastAction)
             self.__valueMap[lastQKey] += self.__alpha * bestActionVal 
+
+        # Decide on actual move to play (/action)
+        if random.random() < self.__epsilon:
+            move = random.choice(self.__actionList)
+        else:
+            move = bestAction
 
         # Remember this state and action
         self.__lastAction = move
