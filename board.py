@@ -62,13 +62,13 @@ class TicTacToeBoard():
     def checkWinner(self):
         """Returns 0 for no winner. Otherwise 1 or 2 indicating the winning player"""
 
-        winners = dict()
+        winners = set()
         # Check rows
         for row in self.__board:
             mx=max(row)
             mn=min(row)
             if mx==mn and mx!=0:
-                winners[mx] = 1
+                winners.add(mx)
 
         # Check columns
         b = self.__board.transpose()
@@ -76,20 +76,20 @@ class TicTacToeBoard():
             mx=max(row)
             mn=min(row)
             if mx==mn and mx!=0:
-                winners[mx] = 1
+                winners.add(mx)
 
         # Check diagonals
         b = self.__board
         if b[0,0] == b[1,1] and b[1,1] == b[2,2]:
-            winners[b[1,1]] = 1
+            winners.add(b[1,1])
         elif b[2,0] == b[1,1] and b[1,1] == b[0,2]:
-            winners[b[1,1]] = 1
+            winners.add(b[1,1])
 
         winnerCount = len(winners)
         if winnerCount==0:
             return 0
         elif winnerCount==1:
-            return list(winners.keys())[0]
+            return winners.pop()
         else:
             raise IllegalPositionException
 
