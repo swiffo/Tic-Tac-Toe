@@ -5,13 +5,22 @@ import board
 from players import *
 
 
-class TicTacToeGame():
-    """Class for controlling a game between two specified players.
+# The tic-tac-toe game takes as initializing input two AI/player classes. These classes must implement the following methods:
 
-Players are classes that must implement methods:
-    proposeMove(playerNumber, boardAsMatrix) [returns (x,y) indicating where to put token]
-    receiveReward(reward) [Reward for the last move taken]
-"""
+# A player class must implement the methods,
+#     def proposeMove(self, number, matrixBoard): must return move (number from 1 to 9)
+#     def receiveReward(self, reward): return ignored
+#     def reset(self): return ignored
+
+# They will be called as follows:
+# For each episode:
+#     [proposeMove] will be called with the player number and a matrix-board as given by the TicTacBoard.boardAsMatrix(). 
+#     [receiveReward] will be called with the reward for the last action
+# [reset] will be called, signalling that the player should be ready for a new episode.
+
+
+class TicTacToeGame():
+    """Class for controlling a game between two specified players."""
     def __init__(self, player1, player2):
         """Set everything up"""
         print("Init game")

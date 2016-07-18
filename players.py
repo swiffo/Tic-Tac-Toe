@@ -131,3 +131,6 @@ class LearningPlayer1():
         else:
             self.__epsilon = 0
             self.__alpha = 0
+
+
+    
