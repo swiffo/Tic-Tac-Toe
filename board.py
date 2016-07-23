@@ -93,6 +93,15 @@ class TicTacToeBoard():
         else:
             raise IllegalPositionException
 
+    def identifier(self):
+        """Integer uniquely identifying the board positions"""
+
+        val = 0
+        for n, x in enumerate(self.__board.flat):
+            val += x * 3**n
+
+        return val
+
 
 if __name__ == '__main__':
     board = TicTacToeBoard()

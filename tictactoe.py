@@ -33,7 +33,7 @@ class TicTacToeGame():
 
         self.player1.reset()
         self.player2.reset()
-        self.board = board.TicTacToeBoard()
+        gameBoard = board.TicTacToeBoard()
         
         for turn in range(1,10):
             playerNumber = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
@@ -41,29 +41,28 @@ class TicTacToeGame():
             player      = self.__currentPlayer(turn)
             otherPlayer = self.__waitingPlayer(turn)
 
-            matrixBoard = self.board.boardAsMatrix()
-            move = player.proposeMove(playerNumber, matrixBoard)
+            move = player.proposeMove(playerNumber, gameBoard)
             
             # Enact the move
             try:
-                self.board.placeToken(move, playerNumber)
+                gameBoard.placeToken(move, playerNumber)
             except board.IllegalMoveException:
                 player.receiveReward(-2) # Bad move, penalized more than losing honestly
                 if not quiet:
                     print("Illegal move by player {} (proposed {})".format(playerNumber, str(move)))
                     print("Player {} wins!".format(playerNumber%2 + 1)) # The other guy wins
-                    self.board.printBoard()
+                    gameBoard.printBoard()
                 break
 
             # Check for winner
             if turn >= 5:  # No need to check for a winner till turn 5
-                winner = self.board.checkWinner()
+                winner = gameBoard.checkWinner()
                 if winner != 0:
                     player.receiveReward(1) # You won, have a cookie!
                     otherPlayer.receiveReward(-1) # You lose the game and a cookie
                     if not quiet:
                         print("Player {} wins!".format(playerNumber))
-                        self.board.printBoard()
+                        gameBoard.printBoard()
                     break
 
             if turn > 1:
@@ -74,7 +73,7 @@ class TicTacToeGame():
             otherPlayer.receiveReward(0)
             if not quiet:
                 print("Draw!")
-                self.board.printBoard()
+                gameBoard.printBoard()
 
 
     def __currentPlayer(self, turn):

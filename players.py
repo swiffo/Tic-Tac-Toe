@@ -11,7 +11,7 @@ import board
 class randomPlayer():
     """A player that makes a random move each turn regardless of the legality of the move"""
 
-    def proposeMove(self, number, matrixBoard):
+    def proposeMove(self, number, board):
         """Returns random move"""
         return (random.randrange(1,4), random.randrange(1,4))
 
@@ -24,14 +24,12 @@ class randomPlayer():
 class humanPlayer():
     """'AI' which will display the board and prompt the user for input at each turn"""
 
-    def proposeMove(self, number, matrixBoard):
+    def proposeMove(self, number, gameBoard):
         """Prints relevant information and prompts user for input"""
 
         print("Make a move, player {} (symbol={})".format(number, board.playerNumberToSymbol(number)))
 
-        boardString = self.__boardRepresentation(matrixBoard)
-
-        print("\n"+boardString+"\n")
+        gameBoard.printBoard()
         print(np.array([1,2,3,4,5,6,7,8,9]).reshape((3,3)))
 
         choice = input()
@@ -46,12 +44,6 @@ class humanPlayer():
 
     def reset(self):
         print('Game ended')
-
-    def __boardRepresentation(self, matrixBoard):
-        lines = [ "".join([board.occupancyNumberToSymbol(occ) for occ in row]) for row in matrixBoard]
-        boardString = "\n".join(lines)
-
-        return boardString
         
 
 class LearningPlayer1():
@@ -72,12 +64,15 @@ class LearningPlayer1():
         self.__lastAction = None
         self.__lastState  = None
         
-    def proposeMove(self, playerNumber, currentBoard):
+    def proposeMove(self, playerNumber, board):
         """Use epsilon-greedy Q-learning to generate moves"""
+
+        # We use the board identifier as representative of the state
+        boardIdentifier = board.identifier()
 
         # First identify the best move. We need this even if we do an exploratory action
         # to update the action-value function.
-        bestActionVal, bestAction = max([(self.__valueMap[(currentBoard, action)], action) for action in self.__actionList])
+        bestActionVal, bestAction = max([(self.__valueMap[(boardIdentifier, action)], action) for action in self.__actionList])
     
         # Update value of previous state unless it is the first move
         if self.__lastState is not None:
@@ -95,7 +90,7 @@ class LearningPlayer1():
 
         # Remember this state and action
         self.__lastAction = move
-        self.__lastState  = currentBoard
+        self.__lastState  = boardIdentifier
 
         return move
 
