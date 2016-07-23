@@ -2,8 +2,8 @@ from tictactoe import *
 import timeit
 
 def testAI(numEpisodes):
-    ai1 = LearningPlayer1()
-    ai2 = LearningPlayer1()
+    ai1 = QLearningPlayer1()
+    ai2 = QLearningPlayer1()
     game = TicTacToeGame(ai1, ai2)
     t_start = timeit.default_timer()
     for n in range(numEpisodes):

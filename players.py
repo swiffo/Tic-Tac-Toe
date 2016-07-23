@@ -46,7 +46,7 @@ class humanPlayer():
         print('Game ended')
         
 
-class LearningPlayer1():
+class QLearningPlayer1():
     """An AI using simple Q-learning to learn with an epsilon-greedy algorithm"""
 
     baseEpsilon = 0.05
