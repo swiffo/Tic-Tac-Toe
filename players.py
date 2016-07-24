@@ -115,6 +115,11 @@ class QLearningPlayer1():
             self._alpha = 0
 
 
+def _move_to_afterstate_identifier(current_board, move, player_number):
+    board_copy = current_board.copy()
+    board_copy[move] = player_number
+    return tuple(board_copy.flat)
+
 class AfterStateLearningPlayer:
     def __init__(self):
         self._value_map = collections.defaultdict(lambda: 0.1)
@@ -129,36 +134,24 @@ class AfterStateLearningPlayer:
         board_copy = board.board_as_matrix()
 
         legal_moves = [(x,y) for x in range(3) for y in range(3) if board_copy[x, y]==0]
+        legal_afterstates = [_move_to_afterstate_identifier(board_copy, m, playerNumber) for m in legal_moves]
+        legal_afterstate_values = [self._value_map[afterstate] for afterstate in legal_afterstates]
 
-        best_move = None
-        best_afterstate = None
-        best_afterstate_val = float('-inf')
-
-        for move in legal_moves:
-            temp_board = board_copy.copy()
-            temp_board[move] = playerNumber
-
-            state = tuple(temp_board.flat)
-            stateVal = self._value_map[state]
-
-            if stateVal > best_afterstate_val:
-                best_afterstate = state
-                best_afterstate_val = stateVal
-                best_move = move
+        best_afterstate_val, best_index = max(zip(legal_afterstate_values, range(len(legal_afterstate_values))))
 
         # Decide on actual move to play (/action)
         if random.random() < self._epsilon:
-            move = random.choice(legal_moves)
+            move, afterstate = random.choice(list(zip(legal_moves, legal_afterstates)))
         else:
-            move = best_move
+            move = legal_moves[best_index]
+            afterstate = legal_afterstate_values[best_index]
 
         # Update the value map
         if self._last_afterstate is not None:
             self._value_map[self._last_afterstate] += self._alpha * best_afterstate_val
 
         # Remember this afterstate
-        # WRONG AFTERSTATE IN CASE OF EXPLORATION!!! 
-        self._last_afterstate = best_afterstate
+        self._last_afterstate = afterstate
 
         #M Moves are returned with upper left being (1,1) [not (0,0)]
         return move[0]+1, move[1]+1
