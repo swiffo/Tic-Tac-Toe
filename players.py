@@ -24,9 +24,9 @@ class humanPlayer():
     def proposeMove(self, number, gameBoard):
         """Prints relevant information and prompts user for input"""
 
-        print("Make a move, player {} (symbol={})".format(number, board.playerNumberToSymbol(number)))
+        print("Make a move, player {} (symbol={})".format(number, board.player_number_to_symbol(number)))
 
-        gameBoard.printBoard()
+        gameBoard.print_board()
         print(np.array([1,2,3,4,5,6,7,8,9]).reshape((3,3)))
 
         choice = input()
@@ -127,7 +127,7 @@ class AfterStateLearningPlayer:
         """Use epsilon-greedy strategy on afterstates to choose move"""
 
         # Find the best possible legal move
-        boardCopy = board.boardAsMatrix()
+        boardCopy = board.board_as_matrix()
 
         legalMoves = [(x,y) for x in range(3) for y in range(3) if boardCopy[x,y]==0]
 

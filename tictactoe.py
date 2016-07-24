@@ -8,7 +8,7 @@ from players import *
 # The tic-tac-toe game takes as initializing input two AI/player classes. These classes must implement the following methods:
 
 # A player class must implement the methods,
-#     def proposeMove(self, number, matrixBoard): must return move (number from 1 to 9)
+#     def proposeMove(self, number, matrixBoard): must return move (2-tuple (1,1), (1,2), ..., (3,3))
 #     def receiveReward(self, reward): return ignored
 #     def reset(self): return ignored
 
@@ -45,24 +45,24 @@ class TicTacToeGame():
             
             # Enact the move
             try:
-                gameBoard.placeToken(move, playerNumber)
+                gameBoard.place_token(move, playerNumber)
             except board.IllegalMoveException:
                 player.receiveReward(-2) # Bad move, penalized more than losing honestly
                 if not quiet:
                     print("Illegal move by player {} (proposed {})".format(playerNumber, str(move)))
                     print("Player {} wins!".format(playerNumber%2 + 1)) # The other guy wins
-                    gameBoard.printBoard()
+                    gameBoard.print_board()
                 break
 
             # Check for winner
             if turn >= 5:  # No need to check for a winner till turn 5
-                winner = gameBoard.checkWinner()
+                winner = gameBoard.check_winner()
                 if winner != 0:
                     player.receiveReward(1) # You won, have a cookie!
                     otherPlayer.receiveReward(-1) # You lose the game and a cookie
                     if not quiet:
                         print("Player {} wins!".format(playerNumber))
-                        gameBoard.printBoard()
+                        gameBoard.print_board()
                     break
 
             if turn > 1:
@@ -73,7 +73,7 @@ class TicTacToeGame():
             otherPlayer.receiveReward(0)
             if not quiet:
                 print("Draw!")
-                gameBoard.printBoard()
+                gameBoard.print_board()
 
 
     def __currentPlayer(self, turn):
