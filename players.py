@@ -45,48 +45,48 @@ class humanPlayer():
 class QLearningPlayer1():
     """An AI using simple Q-learning to learn with an epsilon-greedy algorithm"""
 
-    baseEpsilon = 0.05
-    baseAlpha = 0.1
+    base_epsilon = 0.05
+    base_alpha = 0.1
 
     def __init__(self):
-        self.__valueMap = collections.defaultdict(lambda:0.1) # (state,action) -> value (i.e., the action-value function)
-        self.__epsilon = self.baseEpsilon # Chance of doing random move
-        self.__alpha = self.baseAlpha # Learning speed
-        self.__actionList = [(x,y) for x in range(1,4) for y in range(1,4)] # Possible actions
-        self.__lastAction = None # Memory of last taken action
-        self.__lastState = None # Memory of last state
+        self._value_map = collections.defaultdict(lambda:0.1) # (state,action) -> value (i.e., the action-value function)
+        self._epsilon = self.base_epsilon # Chance of doing random move
+        self._alpha = self.base_alpha # Learning speed
+        self._action_list = [(x,y) for x in range(1,4) for y in range(1,4)] # Possible actions
+        self._last_action = None # Memory of last taken action
+        self._last_state = None # Memory of last state
 
     def reset(self):
-        self.__lastAction = None
-        self.__lastState  = None
+        self._last_action = None
+        self._last_state = None
         
     def propose_move(self, playerNumber, board):
         """Use epsilon-greedy Q-learning to generate moves"""
 
         # We use the board identifier as representative of the state
-        boardIdentifier = board.identifier()
+        state_identifier = board.identifier()
 
         # First identify the best move. We need this even if we do an exploratory action
         # to update the action-value function.
-        bestActionVal, bestAction = max([(self.__valueMap[(boardIdentifier, action)], action) for action in self.__actionList])
+        best_action_val, best_action = max([(self._value_map[(state_identifier, action)], action) for action in self._action_list])
     
         # Update value of previous state unless it is the first move
-        if self.__lastState is not None:
+        if self._last_state is not None:
             # Note that we do Q(s_t, a_t) += \alpha * max_a' Q(s_{t+1}, a') here.
             # The remaining adjustment will already have been done in receive_reward 
             # (see explanation there)
-            lastQKey = (self.__lastState, self.__lastAction)
-            self.__valueMap[lastQKey] += self.__alpha * bestActionVal 
+            lastQKey = (self._last_state, self._last_action)
+            self._value_map[lastQKey] += self._alpha * best_action_val 
 
         # Decide on actual move to play (/action)
-        if random.random() < self.__epsilon:
-            move = random.choice(self.__actionList)
+        if random.random() < self._epsilon:
+            move = random.choice(self._action_list)
         else:
-            move = bestAction
+            move = best_action
 
         # Remember this state and action
-        self.__lastAction = move
-        self.__lastState = boardIdentifier
+        self._last_action = move
+        self._last_state = state_identifier
 
         return move
 
@@ -99,8 +99,8 @@ class QLearningPlayer1():
         # **IF** we do not terminate and reach another state, **THEN** do we add the remaining
         # modification, Q(s_t, a_t) += \alpha * (max_a' Q(s_{t+1}, a')).
 
-        lastQKey = (self.__lastState, self.__lastAction)
-        self.__valueMap[lastQKey] += self.__alpha * (reward - self.__valueMap[lastQKey])
+        lastQKey = (self._last_state, self._last_action)
+        self._value_map[lastQKey] += self._alpha * (reward - self._value_map[lastQKey])
 
 
     def setLearningState(self, val):
@@ -108,78 +108,79 @@ class QLearningPlayer1():
         without learning
         """
         if val:
-            self.__epsilon = self.baseEpsilon
-            self.__alpha = self.baseAlpha
+            self._epsilon = self.base_epsilon
+            self._alpha = self.base_alpha
         else:
-            self.__epsilon = 0
-            self.__alpha = 0
+            self._epsilon = 0
+            self._alpha = 0
 
 
 class AfterStateLearningPlayer:
     def __init__(self):
-        self.__valueMap = collections.defaultdict(lambda: 0.1)
-        self.__alpha = 0.1
-        self.__epsilon = 0.05
-        self.__lastAfterState = None
+        self._value_map = collections.defaultdict(lambda: 0.1)
+        self._alpha = 0.1
+        self._epsilon = 0.05
+        self._last_afterstate = None
 
     def propose_move(self, playerNumber, board):
         """Use epsilon-greedy strategy on afterstates to choose move"""
 
         # Find the best possible legal move
-        boardCopy = board.board_as_matrix()
+        board_copy = board.board_as_matrix()
 
-        legalMoves = [(x,y) for x in range(3) for y in range(3) if boardCopy[x, y]==0]
+        legal_moves = [(x,y) for x in range(3) for y in range(3) if board_copy[x, y]==0]
 
-        bestMove = None
-        bestAfterState = None
-        bestAfterStateVal = float('-inf')
+        best_move = None
+        best_afterstate = None
+        best_afterstate_val = float('-inf')
 
-        for move in legalMoves:
-            tempBoard = boardCopy.copy()
-            tempBoard[move] = playerNumber
+        for move in legal_moves:
+            temp_board = board_copy.copy()
+            temp_board[move] = playerNumber
 
-            state    = tuple(tempBoard.flat)
-            stateVal = self.__valueMap[state]
+            state = tuple(temp_board.flat)
+            stateVal = self._value_map[state]
 
-            if stateVal > bestAfterStateVal:
-                bestAfterState = state
-                bestAfterStateVal = stateVal
-                bestMove = move
+            if stateVal > best_afterstate_val:
+                best_afterstate = state
+                best_afterstate_val = stateVal
+                best_move = move
 
         # Decide on actual move to play (/action)
-        if random.random() < self.__epsilon:
-            move = random.choice(legalMoves)
+        if random.random() < self._epsilon:
+            move = random.choice(legal_moves)
         else:
-            move = bestMove
+            move = best_move
 
         # Update the value map
-        if self.__lastAfterState is not None:
-            self.__valueMap[self.__lastAfterState] += self.__alpha * bestAfterStateVal
+        if self._last_afterstate is not None:
+            self._value_map[self._last_afterstate] += self._alpha * best_afterstate_val
 
-        # Remember this afterstate 
-        self.__lastAfterState  = bestAfterState
+        # Remember this afterstate
+        # WRONG AFTERSTATE IN CASE OF EXPLORATION!!! 
+        self._last_afterstate = best_afterstate
 
         #M Moves are returned with upper left being (1,1) [not (0,0)]
         return move[0]+1, move[1]+1
 
     def receive_reward(self, reward):
         """Update value map with reward for the last move"""
-        self.__valueMap[self.__lastAfterState] += self.__alpha * (reward - self.__valueMap[self.__lastAfterState])
+        self._value_map[self._last_afterstate] += self._alpha * (reward - self._value_map[self._last_afterstate])
 
     def reset(self):
         """Must be called between games"""
-        self.__lastAfterState = None
+        self._last_afterstate = None
 
     def setLearningState(self, val):
         """Takes in boolean to decide with to learn using epsilon-greedy method or simply play greedily 
         without learning
         """
         if val:
-            self.__epsilon = 0.05
-            self.__alpha = 0.1
+            self._epsilon = 0.05
+            self._alpha = 0.1
         else:
-            self.__epsilon = 0
-            self.__alpha = 0
+            self._epsilon = 0
+            self._alpha = 0
 
 
 
