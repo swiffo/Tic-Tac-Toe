@@ -1,20 +1,26 @@
-from tictactoe import *
-import timeit
+"""When run trains two tic-tac-toe AIs and lets a human player play against them"""
 
-def testAI(numEpisodes):
-    ai1 = AfterStateLearningPlayer()
-    ai2 = QLearningPlayer1()
+import timeit
+from tictactoe import TicTacToeGame
+import players
+
+def run_game(num_episodes):
+    """Trains two AIs over the specified number of episodes and
+    then let's human play against them"""
+
+    ai1 = players.AfterStateLearningPlayer()
+    ai2 = players.QLearningPlayer1()
     game = TicTacToeGame(ai1, ai2)
     t_start = timeit.default_timer()
-    for n in range(numEpisodes):
-        if n%10000 == 0:
-            print('Have trained {} times ...'.format(n))
+    for episode in range(num_episodes):
+        if episode%10000 == 0:
+            print('Have trained {} times ...'.format(episode))
         game.play(quiet=True)
     t_end = timeit.default_timer()
     print('Done training in {:.0f}s'.format(t_end-t_start))
     ai1.setLearningState(False) # Stop exploratory actions
     ai2.setLearningState(False)
-    human = humanPlayer()
+    human = players.humanPlayer()
     game1 = TicTacToeGame(human, ai2)
     game2 = TicTacToeGame(ai1, human)
 
@@ -29,6 +35,5 @@ def testAI(numEpisodes):
             break
 
 if __name__ == "__main__":
-    numEpisodes = int(input('How many training episodes? '))
-    testAI(numEpisodes)
-        
+    num_episodes = int(input('How many training episodes? '))
+    run_game(num_episodes)
