@@ -9,7 +9,7 @@ def run_game(num_episodes):
     then let's human play against them"""
 
     ai1 = players.AfterStateLearningPlayer()
-    ai2 = players.QLearningPlayer1()
+    ai2 = players.QLearningPlayer()
     game = TicTacToeGame(ai1, ai2)
     t_start = timeit.default_timer()
     for episode in range(num_episodes):
@@ -18,9 +18,9 @@ def run_game(num_episodes):
         game.play(quiet=True)
     t_end = timeit.default_timer()
     print('Done training in {:.0f}s'.format(t_end-t_start))
-    ai1.setLearningState(False) # Stop exploratory actions
-    ai2.setLearningState(False)
-    human = players.humanPlayer()
+    ai1.set_learning_state(False) # Stop exploratory actions
+    ai2.set_learning_state(False)
+    human = players.HumanPlayer()
     game1 = TicTacToeGame(human, ai2)
     game2 = TicTacToeGame(ai1, human)
 
