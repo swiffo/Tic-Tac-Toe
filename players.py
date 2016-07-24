@@ -8,11 +8,11 @@ import board
 class randomPlayer():
     """A player that makes a random move each turn regardless of the legality of the move"""
 
-    def proposeMove(self, number, board):
+    def propose_move(self, number, board):
         """Returns random move"""
         return (random.randrange(1,4), random.randrange(1,4))
 
-    def receiveReward(self, reward):
+    def receive_reward(self, reward):
         pass 
 
     def reset(self):
@@ -21,7 +21,7 @@ class randomPlayer():
 class humanPlayer():
     """'AI' which will display the board and prompt the user for input at each turn"""
 
-    def proposeMove(self, number, gameBoard):
+    def propose_move(self, number, gameBoard):
         """Prints relevant information and prompts user for input"""
 
         print("Make a move, player {} (symbol={})".format(number, board.player_number_to_symbol(number)))
@@ -36,7 +36,7 @@ class humanPlayer():
 
         return (x,y)
 
-    def receiveReward(self, reward):
+    def receive_reward(self, reward):
         pass
 
     def reset(self):
@@ -61,7 +61,7 @@ class QLearningPlayer1():
         self.__lastAction = None
         self.__lastState  = None
         
-    def proposeMove(self, playerNumber, board):
+    def propose_move(self, playerNumber, board):
         """Use epsilon-greedy Q-learning to generate moves"""
 
         # We use the board identifier as representative of the state
@@ -74,7 +74,7 @@ class QLearningPlayer1():
         # Update value of previous state unless it is the first move
         if self.__lastState is not None:
             # Note that we do Q(s_t, a_t) += \alpha * max_a' Q(s_{t+1}, a') here.
-            # The remaining adjustment will already have been done in receiveReward 
+            # The remaining adjustment will already have been done in receive_reward 
             # (see explanation there)
             lastQKey = (self.__lastState, self.__lastAction)
             self.__valueMap[lastQKey] += self.__alpha * bestActionVal 
@@ -91,7 +91,7 @@ class QLearningPlayer1():
 
         return move
 
-    def receiveReward(self, reward):
+    def receive_reward(self, reward):
         """Reward received for previous move"""
 
         # Q-learning uses a backup of the reward and the estimated value of the best action in the 
@@ -123,7 +123,7 @@ class AfterStateLearningPlayer:
         self.__epsilon = 0.05
         self.__lastAfterState = None
 
-    def proposeMove(self, playerNumber, board):
+    def propose_move(self, playerNumber, board):
         """Use epsilon-greedy strategy on afterstates to choose move"""
 
         # Find the best possible legal move
@@ -163,7 +163,7 @@ class AfterStateLearningPlayer:
         #M Moves are returned with upper left being (1,1) [not (0,0)]
         return move[0]+1, move[1]+1
 
-    def receiveReward(self, reward):
+    def receive_reward(self, reward):
         """Update value map with reward for the last move"""
         self.__valueMap[self.__lastAfterState] += self.__alpha * (reward - self.__valueMap[self.__lastAfterState])
 
