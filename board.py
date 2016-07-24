@@ -56,8 +56,8 @@ class TicTacToeBoard():
         print("\n"+output+"\n")
 
     def boardAsMatrix(self):
-        """Returns board represented as 3x3 matrix with entries 0 (empty cell), 1 (X) and 2 (O)."""
-        return tuple([tuple(row) for row in self.__board])
+        """Returns board represented as 3x3 numpy-matrix with entries 0 (empty cell), 1 (X) and 2 (O)."""
+        return self.__board.copy()
 
     def checkWinner(self):
         """Returns 0 for no winner. Otherwise 1 or 2 indicating the winning player"""

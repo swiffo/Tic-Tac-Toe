@@ -3,10 +3,7 @@ import random
 import numpy as np
 import board
 
-# A player class must implement the methods,
-#     def proposeMove(self, number, matrixBoard): returns move (number from 1 to 9)
-#     def receiveReward(self, reward): returns None
-#     def reset(self): returns None
+# See comments ot start of tictactoe.py for what a player class must implement and satisfy.
 
 class randomPlayer():
     """A player that makes a random move each turn regardless of the legality of the move"""
@@ -117,6 +114,76 @@ class QLearningPlayer1():
         else:
             self.__epsilon = 0
             self.__alpha = 0
+
+
+class AfterStateLearningPlayer:
+    def __init__(self):
+        self.__valueMap = collections.defaultdict(lambda: 0.1)
+        self.__alpha = 0.1
+        self.__epsilon = 0.05
+        self.__lastAfterState = None
+
+    def proposeMove(self, playerNumber, board):
+        """Use epsilon-greedy strategy on afterstates to choose move"""
+
+        # Find the best possible legal move
+        boardCopy = board.boardAsMatrix()
+
+        legalMoves = [(x,y) for x in range(3) for y in range(3) if boardCopy[x,y]==0]
+
+        bestMove = None
+        bestAfterState = None
+        bestAfterStateVal = float('-inf')
+
+        for move in legalMoves:
+            tempBoard = boardCopy.copy()
+            tempBoard[move] = playerNumber
+
+            state    = tuple(tempBoard.flat)
+            stateVal = self.__valueMap[state]
+
+            if stateVal > bestAfterStateVal:
+                bestAfterState = state
+                bestAfterStateVal = stateVal
+                bestMove = move
+
+        # Decide on actual move to play (/action)
+        if random.random() < self.__epsilon:
+            move = random.choice(legalMoves)
+        else:
+            move = bestMove
+
+        # Update the value map
+        if self.__lastAfterState is not None:
+            self.__valueMap[self.__lastAfterState] += self.__alpha * bestAfterStateVal
+
+        # Remember this afterstate 
+        self.__lastAfterState  = bestAfterState
+
+        #M Moves are returned with upper left being (1,1) [not (0,0)]
+        return move[0]+1, move[1]+1
+
+    def receiveReward(self, reward):
+        """Update value map with reward for the last move"""
+        self.__valueMap[self.__lastAfterState] += self.__alpha * (reward - self.__valueMap[self.__lastAfterState])
+
+    def reset(self):
+        """Must be called between games"""
+        self.__lastAfterState = None
+
+    def setLearningState(self, val):
+        """Takes in boolean to decide with to learn using epsilon-greedy method or simply play greedily 
+        without learning
+        """
+        if val:
+            self.__epsilon = 0.05
+            self.__alpha = 0.1
+        else:
+            self.__epsilon = 0
+            self.__alpha = 0
+
+
+
 
 
     
