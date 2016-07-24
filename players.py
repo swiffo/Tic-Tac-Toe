@@ -29,12 +29,11 @@ class humanPlayer():
         gameBoard.print_board()
         print(np.array([1,2,3,4,5,6,7,8,9]).reshape((3,3)))
 
-        choice = input()
-        choice = int(choice)
+        choice = int(input())
         x = (choice+2) // 3 
         y = choice - (x-1)*3
 
-        return (x,y)
+        return (x, y)
 
     def receive_reward(self, reward):
         pass
@@ -47,7 +46,7 @@ class QLearningPlayer1():
     """An AI using simple Q-learning to learn with an epsilon-greedy algorithm"""
 
     baseEpsilon = 0.05
-    baseAlpha   = 0.1
+    baseAlpha = 0.1
 
     def __init__(self):
         self.__valueMap = collections.defaultdict(lambda:0.1) # (state,action) -> value (i.e., the action-value function)
@@ -87,7 +86,7 @@ class QLearningPlayer1():
 
         # Remember this state and action
         self.__lastAction = move
-        self.__lastState  = boardIdentifier
+        self.__lastState = boardIdentifier
 
         return move
 
@@ -129,7 +128,7 @@ class AfterStateLearningPlayer:
         # Find the best possible legal move
         boardCopy = board.board_as_matrix()
 
-        legalMoves = [(x,y) for x in range(3) for y in range(3) if boardCopy[x,y]==0]
+        legalMoves = [(x,y) for x in range(3) for y in range(3) if boardCopy[x, y]==0]
 
         bestMove = None
         bestAfterState = None
