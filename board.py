@@ -1,5 +1,20 @@
-"""The module defines the the Tic-Tac-Toe board (class) and exceptions used
-to enforce the rules of Tic-Tac-Toe."""
+"""Defines the the Tic-Tac-Toe board (class) and exceptions used to enforce the 
+rules of Tic-Tac-Toe.
+
+Classes:
+    TicTacToeBoard: Handles all moves, raising exceptions if they are illegal, 
+        and determines the winner.
+
+Exceptions:
+    IllegalMoveException: Raised for illegal moves such as placing a token on
+        top of another token.
+
+    IllegalPlayerNumber: Raised when there is an internal reference to a player
+        other than no. 1 or 2.
+
+    IllegalPositionException: Raised if the board is in a position not reachable
+        through legal moves, e.g., 5 naughts and 3 crosses on the board.
+"""
 
 import numpy as np
 
@@ -37,15 +52,19 @@ def occupancy_number_to_symbol(number):
     else:
         return player_number_to_symbol(number)
 
-class IllegalMoveException(Exception):
+class TicTacToeException(Exception):
+    """Base class for tic-tac-toe exceptions"""
+    pass
+
+class IllegalMoveException(TicTacToeException):
     """Indicates an illegal move. E.g., putting a token in an occupied cell"""
     pass
 
-class IllegalPlayerNumber(Exception):
+class IllegalPlayerNumber(TicTacToeException):
     """Indicates a non-valid player number"""
     pass
 
-class IllegalPositionException(Exception):
+class IllegalPositionException(TicTacToeException):
     """Indicates an impossible state of the game. E.g., two winners or 5 X's and only 2 O's"""
     pass
 
@@ -86,6 +105,9 @@ class TicTacToeBoard():
 
     def check_winner(self):
         """Returns 0 for no winner. Otherwise 1 or 2 indicating the winning player"""
+
+        # TODO: This can be done better. For one thing we only need to check for 
+        # winners after 5 moves.
 
         winners = set()
         # Check rows
