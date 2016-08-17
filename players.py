@@ -1,5 +1,23 @@
 """
 Classes for Tic-Tac-Toe players.
+
+See comments at tictactoe.py for what a player class must implement and satisfy.
+
+Classes available:
+- RandomPlayer: Makes random and possibly illegal moves. This player is blind
+    to the board.
+
+- HumanPlayer: Does not make moves on its own but requests input from the 
+    user for each move.
+
+- QLearningPlayer: AI based on Q-learning. Has no initial knowledge of the
+    game other than knowing that there are 9 cells and will initially
+    make illegal moves.
+
+- AfterStateLearningPlayer: AI based on learning a value map for afterstates.
+    As it understands the consequences of its actions, unlike the 
+    QLearningPlayer, it can be said to at least understand the basic rules
+    of tic-tac-toe from the beginning. 
 """
 
 import collections

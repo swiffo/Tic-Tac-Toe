@@ -1,4 +1,8 @@
-"""When run trains two tic-tac-toe AIs and lets a human player play against them"""
+"""Trains two tic-tac-toe AIs and lets a human player play against them.
+
+After training two AIs, one using naughts - the other using crosses,
+the user can play against both alternately.
+"""
 
 import timeit
 from tictactoe import TicTacToeGame
@@ -6,7 +10,15 @@ import players
 
 def run_game(num_episodes):
     """Trains two AIs over the specified number of episodes and
-    then let's human play against them"""
+    then let's human play against them
+
+    Args:
+        num_episodes: The number of episodes used for training the two
+            AIs.
+
+    Returns:
+        None
+    """
 
     ai1 = players.AfterStateLearningPlayer()
     ai2 = players.QLearningPlayer()
