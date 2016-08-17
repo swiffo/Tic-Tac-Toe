@@ -52,19 +52,19 @@ def occupancy_number_to_symbol(number):
     else:
         return player_number_to_symbol(number)
 
-class TicTacToeException(Exception):
+class Error(Exception):
     """Base class for tic-tac-toe exceptions"""
     pass
 
-class IllegalMoveException(TicTacToeException):
+class IllegalMoveException(Error):
     """Indicates an illegal move. E.g., putting a token in an occupied cell"""
     pass
 
-class IllegalPlayerNumber(TicTacToeException):
+class IllegalPlayerNumber(Error):
     """Indicates a non-valid player number"""
     pass
 
-class IllegalPositionException(TicTacToeException):
+class IllegalPositionException(Error):
     """Indicates an impossible state of the game. E.g., two winners or 5 X's and only 2 O's"""
     pass
 
@@ -72,12 +72,20 @@ class TicTacToeBoard():
     """Represents a standard 3x3 tic-tac-toe board and its state"""
 
     def __init__(self):
-        """Set up the initial state (3x3 board)"""
+        """Init TicTacToeBoard() as empty 3x3 board"""
         self._board = np.zeros((3, 3), dtype='int')
 
     def place_token(self, placing, player):
-        """x and y between 1 and 3, player either 1 or 2"""
+        """Place token (naught or cross) for specified player in specified position.
 
+        Args:
+            placing: 2-tuple, (x, y), with x,y in {1,2,3}
+            player: A legal player number (1 or 2)
+
+        Returns:
+            None
+        """
+        
         x, y = placing
         try:
             current_occupant = self._board[x-1, y-1] # Legal position?
