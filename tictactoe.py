@@ -1,3 +1,10 @@
+"""The engine for playing the tic-tac-toe game.
+
+Classes:
+    TicTacToeGame: Initialized with two players, lets them play tic-tac-toe
+        against each other.
+"""
+
 import numpy as np
 import random
 import collections
@@ -33,58 +40,60 @@ class TicTacToeGame():
 
         self.player1.reset()
         self.player2.reset()
-        gameBoard = board.TicTacToeBoard()
+        game_board = board.TicTacToeBoard()
         
         for turn in range(1,10):
-            playerNumber = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
+            player_number = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
 
-            player      = self.__currentPlayer(turn)
-            otherPlayer = self.__waitingPlayer(turn)
+            player = self._current_player(turn)
+            other_player = self._waiting_player(turn)
 
-            move = player.propose_move(playerNumber, gameBoard)
+            move = player.propose_move(player_number, game_board)
             
             # Enact the move
             try:
-                gameBoard.place_token(move, playerNumber)
+                game_board.place_token(move, player_number)
             except board.IllegalMoveException:
                 player.receive_reward(-2) # Bad move, penalized more than losing honestly
                 if not quiet:
-                    print("Illegal move by player {} (proposed {})".format(playerNumber, str(move)))
-                    print("Player {} wins!".format(playerNumber%2 + 1)) # The other guy wins
-                    gameBoard.print_board()
+                    print("Illegal move by player {} (proposed {})".format(player_number, str(move)))
+                    print("Player {} wins!".format(player_number%2 + 1)) # The other guy wins
+                    game_board.print_board()
                 break
 
             # Check for winner
             if turn >= 5:  # No need to check for a winner till turn 5
-                winner = gameBoard.check_winner()
+                winner = game_board.check_winner()
                 if winner != 0:
                     player.receive_reward(1) # You won, have a cookie!
-                    otherPlayer.receive_reward(-1) # You lose the game and a cookie
+                    other_player.receive_reward(-1) # You lose the game and a cookie
                     if not quiet:
-                        print("Player {} wins!".format(playerNumber))
-                        gameBoard.print_board()
+                        print("Player {} wins!".format(player_number))
+                        game_board.print_board()
                     break
 
             if turn > 1:
-                otherPlayer.receive_reward(0) # Note that we wait for the player A to make his move
+                other_player.receive_reward(0) # Note that we wait for the player A to make his move
                                               # before deciding on player B's reward
         else:
             # Having made it to here means 9 tokens have been placed legally on the board
             # with no winner being found. Hence, it's a draw.
             player.receive_reward(0)
-            otherPlayer.receive_reward(0)
+            other_player.receive_reward(0)
             if not quiet:
                 print("Draw!")
-                gameBoard.print_board()
+                game_board.print_board()
 
 
-    def __currentPlayer(self, turn):
+    def _current_player(self, turn):
+        """Return the number of the player making a move in the specified turn."""
         if turn % 2 == 0:
             return self.player2
         else:
             return self.player1
 
-    def __waitingPlayer(self, turn):
+    def _waiting_player(self, turn):
+        """Return the number of the player *not* making a move in the specified turn."""
         if turn % 2 == 0:
             return self.player1
         else:
