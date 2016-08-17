@@ -151,7 +151,7 @@ def _move_to_afterstate_identifier(current_board, move, player_number):
         move: Coordinates (0,0), ... (2,2) signifying move
         player_number: What number on the current_board signifying this player
 
-    Yields:
+    Returns:
         Hashable identifier for the afterstate.
     """
     board_copy = current_board.copy()
@@ -208,7 +208,7 @@ class AfterStateLearningPlayer:
 
     def set_learning_state(self, val):
         """Takes in boolean to decide with to learn using epsilon-greedy method or simply play greedily
-        without learning
+        without learning.
         """
         if val:
             self._epsilon = 0.05
