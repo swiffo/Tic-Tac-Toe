@@ -95,7 +95,8 @@ class QLearningPlayer():
 
         # First identify the best move. We need this even if we do an exploratory action
         # to update the action-value function.
-        best_action_val, best_action = max([(self._value_map[(state_identifier, action)], action) for action in self._action_list])
+        best_action_val, best_action = max([(self._value_map[(state_identifier, action)], action)
+                                            for action in self._action_list])
 
         # Update value of previous state unless it is the first move
         if self._last_state is not None:
