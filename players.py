@@ -7,7 +7,7 @@ Classes available:
 - RandomPlayer: Makes random and possibly illegal moves. This player is blind
     to the board.
 
-- HumanPlayer: Does not make moves on its own but requests input from the 
+- HumanPlayer: Does not make moves on its own but requests input from the
     user for each move.
 
 - QLearningPlayer: AI based on Q-learning. Has no initial knowledge of the
@@ -15,9 +15,9 @@ Classes available:
     make illegal moves.
 
 - AfterStateLearningPlayer: AI based on learning a value map for afterstates.
-    As it understands the consequences of its actions, unlike the 
+    As it understands the consequences of its actions, unlike the
     QLearningPlayer, it can be said to at least understand the basic rules
-    of tic-tac-toe from the beginning. 
+    of tic-tac-toe from the beginning.
 """
 
 import collections
