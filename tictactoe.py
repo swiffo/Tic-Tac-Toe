@@ -5,7 +5,7 @@ Classes:
         against each other.
 """
 
-import tictactoeboard as board
+import tictactoeboard
 import players
 
 REWARD_LEGAL_MOVE = 0 # Reward for making legal move neither winning nor losing
@@ -46,7 +46,7 @@ class TicTacToeGame():
 
         self.player1.reset()
         self.player2.reset()
-        game_board = board.TicTacToeBoard()
+        game_board = tictactoeboard.TicTacToeBoard()
 
         for turn in range(1, 10):
             player_number = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ...
@@ -59,7 +59,7 @@ class TicTacToeGame():
             # Enact the move
             try:
                 game_board.place_token(move, player_number)
-            except board.IllegalMoveException:
+            except tictactoeboard.IllegalMoveException:
                 player.receive_reward(REWARD_ILLEGAL_MOVE)
                 if not quiet:
                     print("Illegal move by player {} (proposed {})".format(
