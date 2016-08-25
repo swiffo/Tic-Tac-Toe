@@ -5,11 +5,8 @@ Classes:
         against each other.
 """
 
-import numpy as np
-import random
-import collections
-import board 
-from players import *
+import board
+import players 
 
 REWARD_LEGAL_MOVE = 0 # Reward for making legal move neither winning nor losing
 REWARD_DRAW = 0
@@ -48,8 +45,8 @@ class TicTacToeGame():
         self.player2.reset()
         game_board = board.TicTacToeBoard()
         
-        for turn in range(1,10):
-            player_number = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ... 
+        for turn in range(1, 10):
+            player_number = (turn+1)%2 + 1 # Order is 1,2,1,2,1,2, ...
 
             player = self._current_player(turn)
             other_player = self._waiting_player(turn)
@@ -60,7 +57,7 @@ class TicTacToeGame():
             try:
                 game_board.place_token(move, player_number)
             except board.IllegalMoveException:
-                player.receive_reward(REWARD_ILLEGAL_MOVE) 
+                player.receive_reward(REWARD_ILLEGAL_MOVE)
                 if not quiet:
                     print("Illegal move by player {} (proposed {})".format(player_number, str(move)))
                     print("Player {} wins!".format(player_number%2 + 1)) # The other guy wins
@@ -81,8 +78,8 @@ class TicTacToeGame():
             if turn > 1:
                 # Note that we wait for the player A to make his move
                 # before deciding on player B's reward
-                other_player.receive_reward(REWARD_LEGAL_MOVE) 
-                                                               
+                other_player.receive_reward(REWARD_LEGAL_MOVE)
+ 
         else:
             # Having made it to here means 9 tokens have been placed legally on the board
             # with no winner being found. Hence, it's a draw.
@@ -108,14 +105,15 @@ class TicTacToeGame():
             return self.player2
                     
 
-def testGame():
-    p1 = randomPlayer()
-    p2 = LearningPlayer1()
-    game = TicTacToeGame(p1, p2)
-    for n in range(100):
+def test_game():
+    """Run simple test"""
+    player1 = players.RandomPlayer()
+    player2 = players.QLearningPlayer()
+    game = TicTacToeGame(player1, player2)
+    for game_number in range(100):
         game.play(True) # play quietly
 
 if __name__ == "__main__":
-    testGame()
+    test_game()
 
 
