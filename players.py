@@ -23,7 +23,7 @@ Classes available:
 import collections
 import random
 import numpy as np
-import board
+import tictactoeboard as board
 
 # See comments ot start of tictactoe.py for what a player class must implement and satisfy.
 

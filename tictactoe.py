@@ -5,7 +5,7 @@ Classes:
         against each other.
 """
 
-import board
+import tictactoeboard as board
 import players
 
 REWARD_LEGAL_MOVE = 0 # Reward for making legal move neither winning nor losing
