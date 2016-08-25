@@ -23,7 +23,7 @@ Classes available:
 import collections
 import random
 import numpy as np
-import tictactoeboard as board
+import tictactoeboard
 
 # See comments ot start of tictactoe.py for what a player class must implement and satisfy.
 
@@ -48,7 +48,7 @@ class HumanPlayer():
     def propose_move(self, number, game_board):
         """Prints relevant information and prompts user for input"""
 
-        print("Make a move, player {} (symbol={})".format(number, board.player_number_to_symbol(number)))
+        print("Make a move, player {} (symbol={})".format(number, tictactoeboard.player_number_to_symbol(number)))
         game_board.print_board()
         print(np.arange(1, 10).reshape((3, 3)))
         choice = int(input())
