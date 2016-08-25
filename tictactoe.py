@@ -11,6 +11,12 @@ import collections
 import board 
 from players import *
 
+REWARD_LEGAL_MOVE = 0 # Reward for making legal move neither winning nor losing
+REWARD_DRAW = 0
+REWARD_WIN = 1
+REWARD_LOSS = -1
+REWARD_ILLEGAL_MOVE = -2 # Bad move, penalized more than losing honestly
+
 
 # The tic-tac-toe game takes as initializing input two AI/player classes. These classes must implement the following methods:
 
@@ -54,7 +60,7 @@ class TicTacToeGame():
             try:
                 game_board.place_token(move, player_number)
             except board.IllegalMoveException:
-                player.receive_reward(-2) # Bad move, penalized more than losing honestly
+                player.receive_reward(REWARD_ILLEGAL_MOVE) 
                 if not quiet:
                     print("Illegal move by player {} (proposed {})".format(player_number, str(move)))
                     print("Player {} wins!".format(player_number%2 + 1)) # The other guy wins
@@ -65,21 +71,23 @@ class TicTacToeGame():
             if turn >= 5:  # No need to check for a winner till turn 5
                 winner = game_board.check_winner()
                 if winner != 0:
-                    player.receive_reward(1) # You won, have a cookie!
-                    other_player.receive_reward(-1) # You lose the game and a cookie
+                    player.receive_reward(REWARD_WIN) # You won, have a cookie!
+                    other_player.receive_reward(REWARD_LOSS) # You lose the game and a cookie
                     if not quiet:
                         print("Player {} wins!".format(player_number))
                         game_board.print_board()
                     break
 
             if turn > 1:
-                other_player.receive_reward(0) # Note that we wait for the player A to make his move
-                                              # before deciding on player B's reward
+                # Note that we wait for the player A to make his move
+                # before deciding on player B's reward
+                other_player.receive_reward(REWARD_LEGAL_MOVE) 
+                                                               
         else:
             # Having made it to here means 9 tokens have been placed legally on the board
             # with no winner being found. Hence, it's a draw.
-            player.receive_reward(0)
-            other_player.receive_reward(0)
+            player.receive_reward(REWARD_DRAW)
+            other_player.receive_reward(REWARD_DRAW)
             if not quiet:
                 print("Draw!")
                 game_board.print_board()
