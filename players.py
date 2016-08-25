@@ -50,7 +50,7 @@ class HumanPlayer():
 
         print("Make a move, player {} (symbol={})".format(number, board.player_number_to_symbol(number)))
         game_board.print_board()
-        print(np.array(range(1, 10)).reshape((3, 3)))
+        print(np.arange(1, 10).reshape((3, 3)))
         choice = int(input())
 
         move_x = (choice+2) // 3
@@ -126,8 +126,8 @@ class QLearningPlayer():
         # **IF** we do not terminate and reach another state, **THEN** do we add the remaining
         # modification, Q(s_t, a_t) += \alpha * (max_a' Q(s_{t+1}, a')).
 
-        last_Qkey = (self._last_state, self._last_action)
-        self._value_map[last_Qkey] += self._alpha * (reward - self._value_map[last_Qkey])
+        last_Q_key = (self._last_state, self._last_action)
+        self._value_map[last_Q_key] += self._alpha * (reward - self._value_map[last_Q_key])
 
 
     def set_learning_state(self, val):
