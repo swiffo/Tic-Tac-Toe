@@ -1,7 +1,7 @@
 # Tic-Tac-Toe
 Tic-tac-toe. The game of the refined lady or gentleman. Now also open to AIs.
 
-The program trains two AIs (one going first, the other going second) using after states for one and pure Q-learning 
+The program trains two AIs using after-states for one and pure Q-learning 
 for the other. The Q-learning AI is not told of the rules and will need to learn not to place tokens on top of other tokens 
 for instance.
 
